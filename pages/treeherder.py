@@ -180,6 +180,14 @@ class TreeherderPage(Base):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
+    def select_next_job(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys(Keys.ARROW_RIGHT)
+
+    def select_previous_job(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys(Keys.ARROW_LEFT)
+
     def select_random_email(self):
         random_email = random.choice(self.all_emails)
         random_email.click()
@@ -285,6 +293,10 @@ class TreeherderPage(Base):
         _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
         _logviewer_button_locator = (By.ID, 'logviewer-btn')
         _pin_job_locator = (By.ID, 'pin-job-btn')
+
+        def wait_for_region_to_load(self):
+            el = self.find_element(*self._job_result_status_locator)
+            self.wait.until(EC.visibility_of(el))
 
         @property
         def job_keyword_name(self):
