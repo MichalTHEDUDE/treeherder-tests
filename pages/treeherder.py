@@ -19,11 +19,13 @@ class TreeherderPage(Base):
     _clear_filter_locator = (By.ID, 'quick-filter-clear-button')
     _close_the_job_panel_locator = (By.CSS_SELECTOR, '.info-panel-navbar-controls > li:nth-child(2)')
     _filter_panel_all_failures_locator = (By.CSS_SELECTOR, '.pull-right input')
+    _filter_panel_body_locator = (By.CSS_SELECTOR, '.th-top-nav-options-panel')
     _filter_panel_busted_failures_locator = (By.ID, 'busted')
     _filter_panel_exception_failures_locator = (By.ID, 'exception')
     _filter_panel_locator = (By.CSS_SELECTOR, 'span.navbar-right > span:nth-child(4)')
     _filter_panel_reset_locator = (By.CSS_SELECTOR, '.pull-right span:nth-child(3)')
     _filter_panel_testfailed_failures_locator = (By.ID, 'testfailed')
+    _info_panel_content_locator = (By.ID, 'info-panel-content')
     _keyboard_shortcuts_locator = (By.CSS_SELECTOR, '#onscreen-shortcuts')
     _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
     _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
@@ -73,8 +75,18 @@ class TreeherderPage(Base):
         return self.find_element(*self._filter_panel_testfailed_failures_locator).is_selected()
 
     @property
+    def filter_panel_is_opened(self):
+        el = self.find_element(*self._filter_panel_body_locator)
+        return el.is_displayed()
+
+    @property
     def job_details(self):
         return self.JobDetails(self)
+
+    @property
+    def job_details_panel_is_opened(self):
+        el = self.find_element(*self._info_panel_content_locator)
+        return el.is_displayed()
 
     @property
     def keyboard_shortcuts_panel_is_displayed(self):
@@ -117,6 +129,10 @@ class TreeherderPage(Base):
 
     def close_the_job_panel(self):
         self.find_element(*self._close_the_job_panel_locator).click()
+
+    def close_all_panels(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys(Keys.ESCAPE)
 
     def deselect_all_failures(self):
         """Filters Panel must be opened"""

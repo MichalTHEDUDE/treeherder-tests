@@ -7,6 +7,24 @@ import random
 from pages.treeherder import TreeherderPage
 
 
+def test_close_open_panels(base_url, selenium):
+    """Shortcut: 'esc'
+    Open Treeherder page, open Filters panel, select random job, close all
+    panels using 'esc' button, verify if all panels are closed"""
+    page = TreeherderPage(selenium, base_url).open()
+
+    page.click_on_filters_panel()
+    page.select_random_job()
+
+    assert page.filter_panel_is_opened
+    assert page.job_details_panel_is_opened
+
+    page.close_all_panels()
+
+    assert not page.filter_panel_is_opened
+    assert not page.job_details_panel_is_opened
+
+
 def test_next_job_shortcut(base_url, selenium):
     """Shortcut: 'Rigth Arrow'
     Open Treeherder page, select random job, select job next to it and take
