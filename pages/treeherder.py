@@ -24,6 +24,7 @@ class TreeherderPage(Base):
     _filter_panel_locator = (By.CSS_SELECTOR, 'span.navbar-right > span:nth-child(4)')
     _filter_panel_reset_locator = (By.CSS_SELECTOR, '.pull-right span:nth-child(3)')
     _filter_panel_testfailed_failures_locator = (By.ID, 'testfailed')
+    _keyboard_shortcuts_locator = (By.CSS_SELECTOR, '#onscreen-shortcuts')
     _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
     _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
@@ -66,6 +67,11 @@ class TreeherderPage(Base):
     @property
     def job_details(self):
         return self.JobDetails(self)
+
+    @property
+    def keyboard_shortcuts_panel_is_displayed(self):
+        el = self.find_element(*self._keyboard_shortcuts_locator)
+        return el.is_displayed()
 
     @property
     def pinboard(self):
@@ -115,6 +121,10 @@ class TreeherderPage(Base):
     def deselect_testfailed_failures(self):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
+
+    def display_keyboard_shortcuts(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys(Keys.SHIFT + '?')
 
     def filter_by(self, term):
         el = self.selenium.find_element(*self._quick_filter_locator)

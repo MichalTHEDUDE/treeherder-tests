@@ -35,3 +35,12 @@ def test_next_job_shortcut(base_url, selenium):
     page.job_details.wait_for_region_to_load()
 
     assert page.job_details.job_keyword_name == assumed_job_keyword
+
+
+def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
+    """Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
+    verify if keyboard shortcut panel is displayed"""
+    page = TreeherderPage(selenium, base_url).open()
+    page.display_keyboard_shortcuts()
+
+    assert page.keyboard_shortcuts_panel_is_displayed
