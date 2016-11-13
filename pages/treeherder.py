@@ -53,6 +53,14 @@ class TreeherderPage(Base):
         return list(itertools.chain.from_iterable([r.jobs for r in self.result_sets]))
 
     @property
+    def all_pending_jobs(self):
+        return list(itertools.chain.from_iterable([r.pending_jobs for r in self.result_sets]))
+
+    @property
+    def all_running_jobs(self):
+        return list(itertools.chain.from_iterable([r.running_jobs for r in self.result_sets]))
+
+    @property
     def checkbox_busted_is_selected(self):
         return self.find_element(*self._filter_panel_busted_failures_locator).is_selected()
 
@@ -102,6 +110,10 @@ class TreeherderPage(Base):
 
     def click_on_active_watched_repo(self):
         self.find_element(*self._active_watched_repo_locator).click()
+
+    def click_on_in_progress_button(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys('i')
 
     def close_the_job_panel(self):
         self.find_element(*self._close_the_job_panel_locator).click()
@@ -222,6 +234,8 @@ class TreeherderPage(Base):
         _expanded_group_content_locator = (By.CSS_SELECTOR, '.group-job-list[style="display: inline;"]')
         _group_content_locator = (By.CSS_SELECTOR, 'span.group-count-list .btn')
         _jobs_locator = (By.CSS_SELECTOR, '.job-btn.filter-shown')
+        _jobs_running_locator = (By.CSS_SELECTOR, '.job-btn.btn-dkgray.filter-shown')
+        _jobs_pending_locator = (By.CSS_SELECTOR, '.job-btn.btn-ltgray.filter-shown')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
         _platform_locator = (By.CLASS_NAME, 'platform')
         _set_bottom_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(8) > a')
@@ -250,6 +264,14 @@ class TreeherderPage(Base):
         @property
         def jobs(self):
             return [self.Job(self.page, root=el) for el in self.find_elements(*self._jobs_locator)]
+
+        @property
+        def pending_jobs(self):
+            return [self.Job(self.page, root=el) for el in self.find_elements(*self._jobs_pending_locator)]
+
+        @property
+        def running_jobs(self):
+            return [self.Job(self.page, root=el) for el in self.find_elements(*self._jobs_running_locator)]
 
         def expand_group_count(self):
             self.find_element(*self._group_content_locator).click()

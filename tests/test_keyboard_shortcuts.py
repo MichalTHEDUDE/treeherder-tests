@@ -8,7 +8,8 @@ from pages.treeherder import TreeherderPage
 
 
 def test_next_job_shortcut(base_url, selenium):
-    """Open Treeherder page, select random job, select job next to it and take
+    """Shortcut: 'Rigth Arrow'
+    Open Treeherder page, select random job, select job next to it and take
     job keyword, go back to previous job and select next job using Right arrow
     shortcut, verify if job keyword match"""
     page = TreeherderPage(selenium, base_url).open()
@@ -38,9 +39,32 @@ def test_next_job_shortcut(base_url, selenium):
 
 
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
-    """Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
+    """Shortcut: SHIFT + '?'
+    Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
     verify if keyboard shortcut panel is displayed"""
     page = TreeherderPage(selenium, base_url).open()
     page.display_keyboard_shortcuts()
 
     assert page.keyboard_shortcuts_panel_is_displayed
+
+
+def test_toggle_pending_and_running_jobs(base_url, selenium):
+    """Shortcut: 'i'
+    Open Treeherder page, count number of in progress jobs (pending and
+    running), click on 'in progress' button using 'i' keyboard shortcut,
+    verify that number of in progress jobs is euqal to zero"""
+    page = TreeherderPage(selenium, base_url).open()
+
+    num_of_pending_jobs = len(page.all_pending_jobs)
+    num_of_running_jobs = len(page.all_running_jobs)
+
+    assert num_of_pending_jobs > 1
+    assert num_of_running_jobs > 1
+
+    page.click_on_in_progress_button()
+
+    num_of_pending_jobs = len(page.all_pending_jobs)
+    num_of_running_jobs = len(page.all_running_jobs)
+
+    assert num_of_pending_jobs == 0
+    assert num_of_running_jobs == 0
