@@ -68,3 +68,15 @@ def test_toggle_pending_and_running_jobs(base_url, selenium):
 
     assert num_of_pending_jobs == 0
     assert num_of_running_jobs == 0
+
+
+def test_show_only_unclassified_failures(base_url, selenium):
+    """Shortcut: 'u'
+    Open Treeherder page, show only unclassified failures using 'u' button,
+    verify number of unclassified failures"""
+    page = TreeherderPage(selenium, base_url).open()
+    page.show_only_unclassified_failures()
+
+    unclassified_jobs = len(page.all_jobs)
+
+    assert unclassified_jobs == page.unclassified_failure_count

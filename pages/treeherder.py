@@ -226,6 +226,10 @@ class TreeherderPage(Base):
         self.wait.until(lambda s: self._active_watched_repo_locator == repo_name)
         return repo_name
 
+    def show_only_unclassified_failures(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys('u')
+
     class ResultSet(Region):
 
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
