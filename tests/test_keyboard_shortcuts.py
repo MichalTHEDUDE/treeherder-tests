@@ -56,6 +56,37 @@ def test_next_job_shortcut(base_url, selenium):
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
+def test_previous_job_shortcut(base_url, selenium):
+    """Shortcut: 'Left Arrow'
+    Open Treeherder page, select random job, select previous job, take
+    job keyword, go back to next job and select previous job using Left Arrow
+    shortcut, verify if job keywords match"""
+    page = TreeherderPage(selenium, base_url).open()
+    all_jobs = page.all_jobs
+
+    # Check number of jobs
+    num_of_jobs = len(all_jobs) - 1
+    rnd_number = random.randint(0, num_of_jobs)
+    previous_job = rnd_number - 1
+
+    if rnd_number == 0:
+        previous_job = num_of_jobs
+
+    # Select random job and job to the left
+    all_jobs[rnd_number].click()
+    all_jobs[previous_job].click()
+    page.job_details.wait_for_region_to_load()
+    assumed_job_keyword = page.job_details.job_keyword_name
+
+    all_jobs[rnd_number].click()
+    page.job_details.wait_for_region_to_load()
+
+    page.select_previous_job()
+    page.job_details.wait_for_region_to_load()
+
+    assert page.job_details.job_keyword_name == assumed_job_keyword
+
+
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
