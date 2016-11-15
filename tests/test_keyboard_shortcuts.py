@@ -87,6 +87,38 @@ def test_previous_job_shortcut(base_url, selenium):
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
+def test_previous_unclassified_failure_shortcut(base_url, selenium):
+    """Shortcut: 'p'
+    Open Treeherder page, show only unclassified failures, select random
+    failure, select previous failure, take job keyword, go back to next failure
+    and select previous unclassified failure using 'p' button shortcut,
+    verify if job keywords match"""
+    page = TreeherderPage(selenium, base_url).open()
+    page.show_only_unclassified_failures()
+    all_unclassified_failures = page.all_jobs
+
+    # Check number of unclassified failures
+    num_of_unclass_failures = len(all_unclassified_failures) - 1
+    rnd_number = random.randint(0, num_of_unclass_failures)
+    previous_failure = rnd_number - 1
+
+    if rnd_number == 0:
+        previous_failure = num_of_unclass_failures
+
+    # Select random unclassified failure
+    all_unclassified_failures[rnd_number].click()
+    all_unclassified_failures[previous_failure].click()
+    assumed_job_keyword = page.job_details.job_keyword_name
+
+    all_unclassified_failures[rnd_number].click()
+    page.job_details.wait_for_region_to_load()
+
+    page.select_previous_unclassified_failure()
+    page.job_details.wait_for_region_to_load()
+
+    assert page.job_details.job_keyword_name == assumed_job_keyword
+
+
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',

@@ -226,6 +226,10 @@ class TreeherderPage(Base):
         el = self.find_element(*self._result_sets_locator)
         el.send_keys(Keys.ARROW_LEFT)
 
+    def select_previous_unclassified_failure(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys('p')
+
     def select_random_email(self):
         random_email = random.choice(self.all_emails)
         random_email.click()
