@@ -38,6 +38,21 @@ def test_enter_quick_filter_shortcut(base_url, selenium):
     assert page.get_search_box_text == 'mozilla'
 
 
+def test_clear_the_quick_filter_shortcut(base_url, selenium):
+    """Shortcut: CTRL + SHIFT + 'f'
+    Open Treeherder page, filter by 'mozilla', verify if filter box contain
+    word 'mozilla', clear the quick filter using CTRL + SHIFT + f shortcut,
+    verify if search box is empty"""
+    page = TreeherderPage(selenium, base_url).open()
+
+    page.filter_by_using_quick_filter('mozilla')
+    assert page.get_search_box_text == 'mozilla'
+
+    page.clear_filter_by_shortcut()
+
+    assert page.get_search_box_text == ''
+
+
 def test_next_job_shortcut(base_url, selenium):
     """Shortcut: 'Rigth Arrow'
     Open Treeherder page, select random job, select job next to it and take

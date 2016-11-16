@@ -122,6 +122,10 @@ class TreeherderPage(Base):
     def clear_filter(self):
         self.selenium.find_element(*self._clear_filter_locator).click()
 
+    def clear_filter_by_shortcut(self):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys(Keys.CONTROL + Keys.SHIFT + 'f')
+
     def click_on_filters_panel(self):
         self.find_element(*self._filter_panel_locator).click()
 
