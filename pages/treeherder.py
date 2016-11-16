@@ -358,6 +358,7 @@ class TreeherderPage(Base):
 
     class JobDetails(Region):
 
+        _active_tab_header_locator = (By.CSS_SELECTOR, '#job-tabs-navbar > nav > ul > li.active > a')
         _job_details_panel_locator = (By.ID, 'job-details-panel')
         _job_keyword_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a:nth-last-child(1)')
         _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
@@ -367,6 +368,10 @@ class TreeherderPage(Base):
         def wait_for_region_to_load(self):
             el = self.find_element(*self._job_result_status_locator)
             self.wait.until(EC.visibility_of(el))
+
+        @property
+        def active_tab_name(self):
+            return self.find_element(*self._active_tab_header_locator).text
 
         @property
         def job_keyword_name(self):
@@ -390,6 +395,10 @@ class TreeherderPage(Base):
             el = self.find_element(*self._pin_job_locator)
             self.wait.until(EC.visibility_of(el))
             el.click()
+
+        def select_next_panel_tab(self):
+            el = self.find_element(*self._job_details_panel_locator)
+            el.send_keys('t')
 
     class Pinboard(Region):
 

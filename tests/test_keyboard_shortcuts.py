@@ -147,6 +147,32 @@ def test_previous_unclassified_failure_shortcut(base_url, selenium):
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
+def test_select_next_info_tab_shortcut(base_url, selenium):
+    """Shortcut: 't'
+    Open Treeherder page, select random job, get active tab name, depending on
+    tab header name verify if next tab have assumed value, change tabs using
+    't' keyboard shortcut"""
+    page = TreeherderPage(selenium, base_url).open()
+    page.select_random_job()
+
+    active_tab_name = page.job_details.active_tab_name
+
+    if active_tab_name == 'Job details':
+        next_tab_name = 'Failure summary'
+        page.job_details.select_next_panel_tab()
+        assert page.job_details.active_tab_name == next_tab_name
+
+    if active_tab_name == 'Failure summary':
+        next_tab_name = 'Annotations'
+        page.job_details.select_next_panel_tab()
+        assert page.job_details.active_tab_name == next_tab_name
+
+    if active_tab_name == 'Performance':
+        next_tab_name = 'Job details'
+        page.job_details.select_next_panel_tab()
+        assert page.job_details.active_tab_name == next_tab_name
+
+
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
