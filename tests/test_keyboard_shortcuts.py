@@ -204,6 +204,21 @@ def test_pin_job_and_enter_bug_number(base_url, selenium):
     assert bug_number in page.pinboard.related_bugs
 
 
+def test_pin_job_and_enter_classification(base_url, selenium):
+    """Shortcut: c
+    Open Treeherder page, select random job, pin job using 'c' shortcut and
+    enter classification text, verify if there is one pinned job and if
+    classification field have comment"""
+    page = TreeherderPage(selenium, base_url).open()
+    page.select_random_job()
+
+    classification_text = u'mozilla'
+    page.pin_job_and_enter_classification(classification_text)
+
+    assert len(page.pinboard.jobs) == 1
+    assert page.pinboard.is_classification_comment_not_empty
+
+
 def test_clear_the_pinboard_shortcut(base_url, selenium, driver):
     """Shortcut: CTRL + SHIFT + 'u'
     Open Treeherder page, pin two random jobs, verify if number of pinned jobs
