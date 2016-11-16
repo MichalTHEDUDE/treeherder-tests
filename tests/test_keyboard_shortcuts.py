@@ -25,6 +25,19 @@ def test_close_open_panels(base_url, selenium):
     assert not page.job_details_panel_is_opened
 
 
+def test_enter_quick_filter_shortcut(base_url, selenium):
+    """Shortcut: 'f'
+    Open Treeherder page, verify if search box is empty, enter search box
+    filter using 'f' shortcut, type 'mozilla', verify if filter box contain
+    word mozilla"""
+    page = TreeherderPage(selenium, base_url).open()
+    assert page.get_search_box_text == ''
+
+    page.filter_by_using_quick_filter('mozilla')
+
+    assert page.get_search_box_text == 'mozilla'
+
+
 def test_next_job_shortcut(base_url, selenium):
     """Shortcut: 'Rigth Arrow'
     Open Treeherder page, select random job, select job next to it and take

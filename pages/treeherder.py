@@ -80,6 +80,11 @@ class TreeherderPage(Base):
         return el.is_displayed()
 
     @property
+    def get_search_box_text(self):
+        el = self.find_element(*self._quick_filter_locator)
+        return el.get_attribute('value')
+
+    @property
     def job_details(self):
         return self.JobDetails(self)
 
@@ -153,6 +158,11 @@ class TreeherderPage(Base):
     def display_keyboard_shortcuts(self):
         el = self.find_element(*self._result_sets_locator)
         el.send_keys(Keys.SHIFT + '?')
+
+    def filter_by_using_quick_filter(self, term):
+        el = self.find_element(*self._result_sets_locator)
+        el.send_keys('f' + term)
+        el.send_keys(Keys.RETURN)
 
     def filter_by(self, term):
         el = self.selenium.find_element(*self._quick_filter_locator)
