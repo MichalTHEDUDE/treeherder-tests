@@ -431,6 +431,10 @@ class TreeherderPage(Base):
             self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
             self.find_element(*self._clear_all_menu_locator).click()
 
+        def clear_pinboard_using_keyboard_shortcut(self):
+            el = self.find_element(*self._root_locator)
+            el.send_keys(Keys.CONTROL + Keys.SHIFT + 'u')
+
         class Job(Region):
 
             @property

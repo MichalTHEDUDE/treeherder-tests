@@ -186,6 +186,22 @@ def test_toggle_pinning_job_during_clicking_shortcut(base_url, selenium, driver)
     assert len(page.pinboard.jobs) > 1
 
 
+def test_clear_the_pinboard_shortcut(base_url, selenium, driver):
+    """Shortcut: CTRL + SHIFT + 'u'
+    Open Treeherder page, pin two random jobs, verify if number of pinned jobs
+    is greater that 1, clear the pinboard using CTRL + SHIFT + 'u' shortcut,
+    verify if number of pinned jobs is zero"""
+    page = TreeherderPage(selenium, base_url).open()
+
+    page.pin_random_job(driver)
+    page.pin_random_job(driver)
+    assert len(page.pinboard.jobs) > 1
+
+    page.pinboard.clear_pinboard_using_keyboard_shortcut()
+
+    assert len(page.pinboard.jobs) == 0
+
+
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
