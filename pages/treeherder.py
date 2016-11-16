@@ -6,6 +6,7 @@ import itertools
 import random
 
 from pypom import Page, Region
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
@@ -203,6 +204,10 @@ class TreeherderPage(Base):
 
     def open_repos_menu(self):
         self.find_element(*self._repos_menu_locator).click()
+
+    def pin_random_job(self, driver):
+        random_job = random.choice(self.all_jobs).click()
+        ActionChains(driver).key_down(Keys.CONTROL).click(random_job).perform()
 
     def pin_using_spacebar(self):
         el = self.find_element(*self._result_sets_locator)

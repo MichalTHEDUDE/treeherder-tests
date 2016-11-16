@@ -173,6 +173,19 @@ def test_select_next_info_tab_shortcut(base_url, selenium):
         assert page.job_details.active_tab_name == next_tab_name
 
 
+def test_toggle_pinning_job_during_clicking_shortcut(base_url, selenium, driver):
+    """Shortcut: CTRL/CMD + job
+    Open Treeherder page, pin two random jobs, verify if number of pinned jobs
+    is greater that 1"""
+    page = TreeherderPage(selenium, base_url).open()
+    assert 0 == len(page.pinboard.jobs)
+
+    page.pin_random_job(driver)
+    page.pin_random_job(driver)
+
+    assert len(page.pinboard.jobs) > 1
+
+
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
