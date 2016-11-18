@@ -83,11 +83,6 @@ class TreeherderPage(Base):
         return el.is_displayed()
 
     @property
-    def get_search_box_text(self):
-        el = self.find_element(*self._quick_filter_locator)
-        return el.get_attribute('value')
-
-    @property
     def job_details(self):
         return self.JobDetails(self)
 
@@ -115,6 +110,11 @@ class TreeherderPage(Base):
         return [self.ResultSet(self, el) for el in self.find_elements(*self._result_sets_locator)]
 
     @property
+    def search_term(self):
+        el = self.find_element(*self._quick_filter_locator)
+        return el.get_attribute('value')
+
+    @property
     def unchecked_repos(self):
         return self.find_elements(*self._unchecked_repos_links_locator)
 
@@ -126,8 +126,8 @@ class TreeherderPage(Base):
         self.selenium.find_element(*self._clear_filter_locator).click()
 
     def clear_filter_by_shortcut(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys(Keys.CONTROL + Keys.SHIFT + 'f')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(
+            Keys.CONTROL + Keys.SHIFT + 'f')
 
     def click_on_filters_panel(self):
         self.find_element(*self._filter_panel_locator).click()
@@ -136,15 +136,13 @@ class TreeherderPage(Base):
         self.find_element(*self._active_watched_repo_locator).click()
 
     def click_on_in_progress_button(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('i')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys('i')
 
     def close_the_job_panel(self):
         self.find_element(*self._close_the_job_panel_locator).click()
 
     def close_all_panels(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys(Keys.ESCAPE)
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.ESCAPE)
 
     def deselect_all_failures(self):
         """Filters Panel must be opened"""
@@ -163,13 +161,11 @@ class TreeherderPage(Base):
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
     def display_keyboard_shortcuts(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys(Keys.SHIFT + '?')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.SHIFT + '?')
 
     def filter_by_using_quick_filter(self, term):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('f' + term)
-        el.send_keys(Keys.RETURN)
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(
+            'f' + term + Keys.RETURN)
 
     def filter_by(self, term):
         el = self.selenium.find_element(*self._quick_filter_locator)
@@ -208,14 +204,12 @@ class TreeherderPage(Base):
         self.find_element(*self._repos_menu_locator).click()
 
     def pin_job_and_enter_bug_number(self, bug_number):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('b')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys('b')
         el = self.find_element(*self._related_bug_input_locator)
         el.send_keys(bug_number + Keys.RETURN)
 
     def pin_job_and_enter_classification(self, classification):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('c')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys('c')
         el = self.find_element(*self._classification_comment_locator)
         el.send_keys(classification + Keys.RETURN)
 
@@ -252,16 +246,13 @@ class TreeherderPage(Base):
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
     def select_next_job(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys(Keys.ARROW_RIGHT)
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.ARROW_RIGHT)
 
     def select_previous_job(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys(Keys.ARROW_LEFT)
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.ARROW_LEFT)
 
     def select_previous_unclassified_failure(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('p')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys('p')
 
     def select_random_email(self):
         random_email = random.choice(self.all_emails)
@@ -280,8 +271,7 @@ class TreeherderPage(Base):
         return repo_name
 
     def show_only_unclassified_failures(self):
-        el = self.find_element(*self._result_sets_locator)
-        el.send_keys('u')
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys('u')
 
     class ResultSet(Region):
 
@@ -394,6 +384,7 @@ class TreeherderPage(Base):
 
         @property
         def job_keyword_name(self):
+            self.wait_for_region_to_load()
             return self.find_element(*self._job_keyword_locator).text
 
         @property
@@ -430,9 +421,9 @@ class TreeherderPage(Base):
         _pinboard_related_bugs_locator = (By.CSS_SELECTOR, '.pinboard-related-bugs-btn a em')
 
         @property
-        def is_classification_comment_not_empty(self):
+        def is_classification_comment_empty(self):
             el = self.find_element(*self._classification_comment_locator)
-            return 'ng-not-empty' in el.get_attribute('class')
+            return 'ng-empty' in el.get_attribute('class')
 
         @property
         def is_pinboard_open(self):

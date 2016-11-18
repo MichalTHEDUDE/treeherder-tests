@@ -9,8 +9,10 @@ from pages.treeherder import TreeherderPage
 
 def test_close_open_panels(base_url, selenium):
     """Shortcut: 'esc'
+
     Open Treeherder page, open Filters panel, select random job, close all
-    panels using 'esc' button, verify if all panels are closed"""
+    panels using 'esc' button, verify if all panels are closed
+    """
     page = TreeherderPage(selenium, base_url).open()
 
     page.click_on_filters_panel()
@@ -27,156 +29,148 @@ def test_close_open_panels(base_url, selenium):
 
 def test_enter_quick_filter_shortcut(base_url, selenium):
     """Shortcut: 'f'
+
     Open Treeherder page, verify if search box is empty, enter search box
     filter using 'f' shortcut, type 'mozilla', verify if filter box contain
-    word mozilla"""
+    word mozilla
+    """
     page = TreeherderPage(selenium, base_url).open()
-    assert page.get_search_box_text == ''
+    assert page.search_term == ''
 
     page.filter_by_using_quick_filter('mozilla')
 
-    assert page.get_search_box_text == 'mozilla'
+    assert page.search_term == 'mozilla'
 
 
 def test_clear_the_quick_filter_shortcut(base_url, selenium):
     """Shortcut: CTRL + SHIFT + 'f'
+
     Open Treeherder page, filter by 'mozilla', verify if filter box contain
     word 'mozilla', clear the quick filter using CTRL + SHIFT + f shortcut,
-    verify if search box is empty"""
+    verify if search box is empty
+    """
     page = TreeherderPage(selenium, base_url).open()
 
     page.filter_by_using_quick_filter('mozilla')
-    assert page.get_search_box_text == 'mozilla'
+    assert page.search_term == 'mozilla'
 
     page.clear_filter_by_shortcut()
 
-    assert page.get_search_box_text == ''
+    assert page.search_term == ''
 
 
 def test_next_job_shortcut(base_url, selenium):
-    """Shortcut: 'Rigth Arrow'
+    """Shortcut: 'Right Arrow'
+
     Open Treeherder page, select random job, select job next to it and take
     job keyword, go back to previous job and select next job using Right arrow
-    shortcut, verify if job keyword match"""
+    shortcut, verify if job keyword match
+    """
     page = TreeherderPage(selenium, base_url).open()
     all_jobs = page.all_jobs
 
     # Check number of jobs
-    num_of_jobs = len(all_jobs) - 1
-    rnd_number = random.randint(0, num_of_jobs)
-    next_job = rnd_number + 1
+    number_of_jobs = len(all_jobs) - 1
+    random_index = random.randint(0, number_of_jobs)
+    next_job = random_index + 1
 
-    if rnd_number == num_of_jobs:
+    if random_index == number_of_jobs:
         next_job = 0
 
     # Select random job and job next to it
-    all_jobs[rnd_number].click()
     all_jobs[next_job].click()
-    page.job_details.wait_for_region_to_load()
     assumed_job_keyword = page.job_details.job_keyword_name
 
-    all_jobs[rnd_number].click()
-    page.job_details.wait_for_region_to_load()
-
+    all_jobs[random_index].click()
     page.select_next_job()
-    page.job_details.wait_for_region_to_load()
 
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
 def test_previous_job_shortcut(base_url, selenium):
     """Shortcut: 'Left Arrow'
+
     Open Treeherder page, select random job, select previous job, take
     job keyword, go back to next job and select previous job using Left Arrow
-    shortcut, verify if job keywords match"""
+    shortcut, verify if job keywords match
+    """
     page = TreeherderPage(selenium, base_url).open()
     all_jobs = page.all_jobs
 
     # Check number of jobs
-    num_of_jobs = len(all_jobs) - 1
-    rnd_number = random.randint(0, num_of_jobs)
-    previous_job = rnd_number - 1
+    number_of_jobs = len(all_jobs) - 1
+    random_index = random.randint(0, number_of_jobs)
+    previous_job = random_index - 1
 
-    if rnd_number == 0:
-        previous_job = num_of_jobs
+    if random_index == 0:
+        previous_job = number_of_jobs
 
     # Select random job and job to the left
-    all_jobs[rnd_number].click()
     all_jobs[previous_job].click()
-    page.job_details.wait_for_region_to_load()
     assumed_job_keyword = page.job_details.job_keyword_name
 
-    all_jobs[rnd_number].click()
-    page.job_details.wait_for_region_to_load()
-
+    all_jobs[random_index].click()
     page.select_previous_job()
-    page.job_details.wait_for_region_to_load()
 
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
 def test_previous_unclassified_failure_shortcut(base_url, selenium):
     """Shortcut: 'p'
+
     Open Treeherder page, show only unclassified failures, select random
     failure, select previous failure, take job keyword, go back to next failure
     and select previous unclassified failure using 'p' button shortcut,
-    verify if job keywords match"""
+    verify if job keywords match
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.show_only_unclassified_failures()
     all_unclassified_failures = page.all_jobs
 
     # Check number of unclassified failures
-    num_of_unclass_failures = len(all_unclassified_failures) - 1
-    rnd_number = random.randint(0, num_of_unclass_failures)
+    number_of_unclassified_failures = len(all_unclassified_failures) - 1
+    rnd_number = random.randint(0, number_of_unclassified_failures)
     previous_failure = rnd_number - 1
 
     if rnd_number == 0:
-        previous_failure = num_of_unclass_failures
+        previous_failure = number_of_unclassified_failures
 
     # Select random unclassified failure
-    all_unclassified_failures[rnd_number].click()
     all_unclassified_failures[previous_failure].click()
     assumed_job_keyword = page.job_details.job_keyword_name
 
     all_unclassified_failures[rnd_number].click()
-    page.job_details.wait_for_region_to_load()
-
     page.select_previous_unclassified_failure()
-    page.job_details.wait_for_region_to_load()
 
     assert page.job_details.job_keyword_name == assumed_job_keyword
 
 
 def test_select_next_info_tab_shortcut(base_url, selenium):
     """Shortcut: 't'
+
     Open Treeherder page, select random job, get active tab name, depending on
     tab header name verify if next tab have assumed value, change tabs using
-    't' keyboard shortcut"""
+    't' keyboard shortcut
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.select_random_job()
 
-    active_tab_name = page.job_details.active_tab_name
+    while page.job_details.active_tab_name != 'Job details':
+        page.select_random_job()
 
-    if active_tab_name == 'Job details':
-        next_tab_name = 'Failure summary'
-        page.job_details.select_next_panel_tab()
-        assert page.job_details.active_tab_name == next_tab_name
+    tabs_list = ['Failure summary', 'Annotations', 'Similar jobs', 'Job details']
 
-    if active_tab_name == 'Failure summary':
-        next_tab_name = 'Annotations'
+    for tab in tabs_list:
         page.job_details.select_next_panel_tab()
-        assert page.job_details.active_tab_name == next_tab_name
-
-    if active_tab_name == 'Performance':
-        next_tab_name = 'Job details'
-        page.job_details.select_next_panel_tab()
-        assert page.job_details.active_tab_name == next_tab_name
+        assert page.job_details.active_tab_name == tab
 
 
 def test_toggle_pinning_job_during_clicking_shortcut(base_url, selenium, driver):
     """Shortcut: CTRL/CMD + job
+
     Open Treeherder page, pin two random jobs, verify if number of pinned jobs
-    is greater that 1"""
+    is greater that 1
+    """
     page = TreeherderPage(selenium, base_url).open()
     assert 0 == len(page.pinboard.jobs)
 
@@ -188,9 +182,11 @@ def test_toggle_pinning_job_during_clicking_shortcut(base_url, selenium, driver)
 
 def test_pin_job_and_enter_bug_number(base_url, selenium):
     """Shortcut: b
+
     Open Treeherder page, select random job, pin job using 'b' shortcut and
     enter bug number, do it once again, verify if there is one pinned job and
-    entered bugs are in related bugs field"""
+    entered bugs are in related bugs field
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.select_random_job()
 
@@ -206,9 +202,11 @@ def test_pin_job_and_enter_bug_number(base_url, selenium):
 
 def test_pin_job_and_enter_classification(base_url, selenium):
     """Shortcut: c
+
     Open Treeherder page, select random job, pin job using 'c' shortcut and
     enter classification text, verify if there is one pinned job and if
-    classification field have comment"""
+    classification field have comment
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.select_random_job()
 
@@ -216,14 +214,16 @@ def test_pin_job_and_enter_classification(base_url, selenium):
     page.pin_job_and_enter_classification(classification_text)
 
     assert len(page.pinboard.jobs) == 1
-    assert page.pinboard.is_classification_comment_not_empty
+    assert not page.pinboard.is_classification_comment_empty
 
 
 def test_clear_the_pinboard_shortcut(base_url, selenium, driver):
     """Shortcut: CTRL + SHIFT + 'u'
+
     Open Treeherder page, pin two random jobs, verify if number of pinned jobs
     is greater that 1, clear the pinboard using CTRL + SHIFT + 'u' shortcut,
-    verify if number of pinned jobs is zero"""
+    verify if number of pinned jobs is zero
+    """
     page = TreeherderPage(selenium, base_url).open()
 
     page.pin_random_job(driver)
@@ -237,8 +237,10 @@ def test_clear_the_pinboard_shortcut(base_url, selenium, driver):
 
 def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
     """Shortcut: SHIFT + '?'
+
     Open Treeherder page, display keyboard shortcuts using SHIFT + '?',
-    verify if keyboard shortcut panel is displayed"""
+    verify if keyboard shortcut panel is displayed
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.display_keyboard_shortcuts()
 
@@ -247,30 +249,28 @@ def test_display_onscreen_keyboard_shortcuts(base_url, selenium):
 
 def test_toggle_pending_and_running_jobs(base_url, selenium):
     """Shortcut: 'i'
+
     Open Treeherder page, count number of in progress jobs (pending and
     running), click on 'in progress' button using 'i' keyboard shortcut,
-    verify that number of in progress jobs is euqal to zero"""
+    verify that number of in progress jobs is euqal to zero
+    """
     page = TreeherderPage(selenium, base_url).open()
 
-    num_of_pending_jobs = len(page.all_pending_jobs)
-    num_of_running_jobs = len(page.all_running_jobs)
-
-    assert num_of_pending_jobs > 1
-    assert num_of_running_jobs > 1
+    assert len(page.all_pending_jobs) > 1
+    assert len(page.all_running_jobs) > 1
 
     page.click_on_in_progress_button()
 
-    num_of_pending_jobs = len(page.all_pending_jobs)
-    num_of_running_jobs = len(page.all_running_jobs)
-
-    assert num_of_pending_jobs == 0
-    assert num_of_running_jobs == 0
+    assert len(page.all_pending_jobs) == 0
+    assert len(page.all_running_jobs) == 0
 
 
 def test_show_only_unclassified_failures(base_url, selenium):
     """Shortcut: 'u'
+
     Open Treeherder page, show only unclassified failures using 'u' button,
-    verify number of unclassified failures"""
+    verify number of unclassified failures
+    """
     page = TreeherderPage(selenium, base_url).open()
     page.show_only_unclassified_failures()
 
