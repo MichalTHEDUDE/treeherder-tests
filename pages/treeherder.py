@@ -17,7 +17,6 @@ from pages.base import Base
 class TreeherderPage(Base):
 
     _active_watched_repo_locator = (By.CSS_SELECTOR, '#watched-repo-navbar button.active')
-    _classification_comment_locator = (By.ID, 'classification-comment')
     _clear_filter_locator = (By.ID, 'quick-filter-clear-button')
     _close_the_job_panel_locator = (By.CSS_SELECTOR, '.info-panel-navbar-controls > li:nth-child(2)')
     _filter_panel_all_failures_locator = (By.CSS_SELECTOR, '.pull-right input')
@@ -34,7 +33,6 @@ class TreeherderPage(Base):
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
     _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
     _quick_filter_locator = (By.ID, 'quick-filter')
-    _related_bug_input_locator = (By.ID, 'related-bug-input')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
@@ -217,16 +215,6 @@ class TreeherderPage(Base):
 
     def open_repos_menu(self):
         self.find_element(*self._repos_menu_locator).click()
-
-    def pin_job_and_enter_bug_number(self, bug_number):
-        self.find_element(By.CSS_SELECTOR, 'body').send_keys('b')
-        el = self.find_element(*self._related_bug_input_locator)
-        el.send_keys(bug_number + Keys.RETURN)
-
-    def pin_job_and_enter_classification(self, classification):
-        self.find_element(By.CSS_SELECTOR, 'body').send_keys('c')
-        el = self.find_element(*self._classification_comment_locator)
-        el.send_keys(classification + Keys.RETURN)
 
     def pin_random_job(self, driver):
         random_job = random.choice(self.all_jobs).click()
@@ -428,17 +416,10 @@ class TreeherderPage(Base):
     class Pinboard(Region):
 
         _root_locator = (By.ID, 'pinboard-panel')
-        _classification_comment_locator = (By.ID, 'classification-comment')
         _clear_all_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(4)')
         _jobs_locator = (By.CLASS_NAME, 'pinned-job')
         _open_save_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .save-btn-dropdown')
         _pinboard_remove_job_locator = (By.CSS_SELECTOR, '#pinned-job-list .pinned-job-close-btn')
-        _pinboard_related_bugs_locator = (By.CSS_SELECTOR, '.pinboard-related-bugs-btn a em')
-
-        @property
-        def is_classification_comment_empty(self):
-            el = self.find_element(*self._classification_comment_locator)
-            return 'ng-empty' in el.get_attribute('class')
 
         @property
         def is_pinboard_open(self):
@@ -447,10 +428,6 @@ class TreeherderPage(Base):
         @property
         def jobs(self):
             return [self.Job(self.page, el) for el in self.find_elements(*self._jobs_locator)]
-
-        @property
-        def related_bugs(self):
-            return [el.text for el in self.find_elements(*self._pinboard_related_bugs_locator)]
 
         @property
         def selected_job(self):
