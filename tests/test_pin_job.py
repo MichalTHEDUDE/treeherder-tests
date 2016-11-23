@@ -11,7 +11,7 @@ def test_pin_job(base_url, selenium):
     job = page.result_sets[0].jobs[0]
     job.click()
     assert 0 == len(page.pinboard.jobs)
-    page.pin_using_spacebar()
+    page.job_details.pin_job(method='keyboard')
     assert 1 == len(page.pinboard.jobs)
     assert job.symbol == page.pinboard.selected_job.symbol
 
@@ -31,9 +31,9 @@ def test_clear_pinboard(base_url, selenium):
     """Open treeherder page, pin a job and then clear the pinboard"""
     page = TreeherderPage(selenium, base_url).open()
     page.result_sets[0].jobs[0].click()
-    page.pin_using_spacebar()
+    page.job_details.pin_job(method='keyboard')
     assert 1 == len(page.pinboard.jobs)
-    page.pinboard.clear_pinboard()
+    page.pinboard.clear_pinboard(method='pointer')
     assert page.pinboard.is_pinboard_open
     assert 0 == len(page.pinboard.jobs)
 

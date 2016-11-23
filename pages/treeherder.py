@@ -122,12 +122,14 @@ class TreeherderPage(Base):
     def unclassified_failure_count(self):
         return int(self.find_element(*self._unclassified_failure_count_locator).text)
 
-    def clear_filter(self):
-        self.selenium.find_element(*self._clear_filter_locator).click()
-
-    def clear_filter_by_shortcut(self):
-        self.find_element(By.CSS_SELECTOR, 'body').send_keys(
-            Keys.CONTROL + Keys.SHIFT + 'f')
+    def clear_filter(self, method='pointer'):
+        if method == 'pointer':
+            self.selenium.find_element(*self._clear_filter_locator).click()
+        elif method == 'keyboard':
+            self.find_element(By.CSS_SELECTOR, 'body').send_keys(
+                Keys.CONTROL + Keys.SHIFT + 'f')
+        else:
+            raise Exception('Unsupported method: {}'.format(method))
 
     def click_on_filters_panel(self):
         self.find_element(*self._filter_panel_locator).click()
@@ -135,8 +137,19 @@ class TreeherderPage(Base):
     def click_on_active_watched_repo(self):
         self.find_element(*self._active_watched_repo_locator).click()
 
-    def click_on_in_progress_button(self):
-        self.find_element(By.CSS_SELECTOR, 'body').send_keys('i')
+    def toggle_jobs_in_progress(self, option='hide'):
+        if option == 'hide':
+            if len(self.all_running_jobs) > 1:
+                self.find_element(By.CSS_SELECTOR, 'body').send_keys('i')
+            else:
+                raise Exception('In progress jobs are hidden. Use "show" option instead.')
+        elif option == 'show':
+            if len(self.all_running_jobs) == 0:
+                self.find_element(By.CSS_SELECTOR, 'body').send_keys('i')
+            else:
+                raise Exception('In progress jobs are shown. Use "hide" option instead.')
+        else:
+            raise Exception('Unsupported option: {}'.format(option))
 
     def close_the_job_panel(self):
         self.find_element(*self._close_the_job_panel_locator).click()
@@ -163,15 +176,17 @@ class TreeherderPage(Base):
     def display_keyboard_shortcuts(self):
         self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.SHIFT + '?')
 
-    def filter_by_using_quick_filter(self, term):
-        self.find_element(By.CSS_SELECTOR, 'body').send_keys(
-            'f' + term + Keys.RETURN)
-
-    def filter_by(self, term):
-        el = self.selenium.find_element(*self._quick_filter_locator)
-        el.send_keys(term)
-        el.send_keys(Keys.RETURN)
-        self.wait.until(lambda s: self.result_sets)
+    def filter_by(self, term, method='pointer'):
+        if method == 'pointer':
+            el = self.selenium.find_element(*self._quick_filter_locator)
+            el.send_keys(term)
+            el.send_keys(Keys.RETURN)
+            self.wait.until(lambda s: self.result_sets)
+        elif method == 'keyboard':
+            self.find_element(By.CSS_SELECTOR, 'body').send_keys(
+                'f' + term + Keys.RETURN)
+        else:
+            raise Exception('Unsupported method: {}'.format(method))
 
     def filter_unclassified_jobs(self):
         self.find_element(*self._unclassified_failure_filter_locator).click()
@@ -216,12 +231,6 @@ class TreeherderPage(Base):
     def pin_random_job(self, driver):
         random_job = random.choice(self.all_jobs).click()
         ActionChains(driver).key_down(Keys.CONTROL).click(random_job).perform()
-
-    def pin_using_spacebar(self):
-        el = self.find_element(*self._result_sets_locator)
-        self.wait.until(EC.visibility_of(el))
-        el.send_keys(Keys.SPACE)
-        self.wait.until(lambda _: self.pinboard.is_pinboard_open)
 
     def reset_filters(self):
         """Filters Panel must be opened"""
@@ -401,10 +410,16 @@ class TreeherderPage(Base):
                 self.selenium.switch_to.window(handle)
             return LogviewerPage(self.selenium, self.page.base_url).wait_for_page_to_load()
 
-        def pin_job(self):
-            el = self.find_element(*self._pin_job_locator)
-            self.wait.until(EC.visibility_of(el))
-            el.click()
+        def pin_job(self, method='pointer'):
+            if method == 'pointer':
+                el = self.find_element(*self._pin_job_locator)
+                self.wait.until(EC.visibility_of(el))
+                el.click()
+            elif method == 'keyboard':
+                self.find_element(
+                    *self._job_details_panel_locator).send_keys(Keys.SPACE)
+            else:
+                raise Exception('Unsupported method: {}'.format(method))
 
         def select_next_panel_tab(self):
             el = self.find_element(*self._job_details_panel_locator)
@@ -441,15 +456,17 @@ class TreeherderPage(Base):
         def selected_job(self):
             return next(j for j in self.jobs if j.is_selected)
 
-        def clear_pinboard(self):
-            el = self.find_element(*self._open_save_menu_locator)
-            el.click()
-            self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
-            self.find_element(*self._clear_all_menu_locator).click()
-
-        def clear_pinboard_using_keyboard_shortcut(self):
-            el = self.find_element(*self._root_locator)
-            el.send_keys(Keys.CONTROL + Keys.SHIFT + 'u')
+        def clear_pinboard(self, method='pointer'):
+            if method == 'pointer':
+                el = self.find_element(*self._open_save_menu_locator)
+                el.click()
+                self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
+                self.find_element(*self._clear_all_menu_locator).click()
+            elif method == 'keyboard':
+                self.find_element(*self._root_locator).send_keys(
+                    Keys.CONTROL + Keys.SHIFT + 'u')
+            else:
+                raise Exception('Unsupported method: {}'.format(method))
 
         class Job(Region):
 

@@ -37,8 +37,7 @@ def test_enter_quick_filter_shortcut(base_url, selenium):
     page = TreeherderPage(selenium, base_url).open()
     assert page.search_term == ''
 
-    page.filter_by_using_quick_filter('mozilla')
-
+    page.filter_by('mozilla', method='keyboard')
     assert page.search_term == 'mozilla'
 
 
@@ -51,11 +50,10 @@ def test_clear_the_quick_filter_shortcut(base_url, selenium):
     """
     page = TreeherderPage(selenium, base_url).open()
 
-    page.filter_by_using_quick_filter('mozilla')
+    page.filter_by('mozilla', method='keyboard')
     assert page.search_term == 'mozilla'
 
-    page.clear_filter_by_shortcut()
-
+    page.clear_filter(method='keyboard')
     assert page.search_term == ''
 
 
@@ -175,9 +173,8 @@ def test_toggle_pinning_job_during_clicking_shortcut(base_url, selenium, driver)
     assert 0 == len(page.pinboard.jobs)
 
     page.pin_random_job(driver)
-    page.pin_random_job(driver)
 
-    assert len(page.pinboard.jobs) > 1
+    assert len(page.pinboard.jobs) == 1
 
 
 def test_pin_job_and_enter_bug_number(base_url, selenium):
@@ -227,10 +224,9 @@ def test_clear_the_pinboard_shortcut(base_url, selenium, driver):
     page = TreeherderPage(selenium, base_url).open()
 
     page.pin_random_job(driver)
-    page.pin_random_job(driver)
-    assert len(page.pinboard.jobs) > 1
+    assert len(page.pinboard.jobs) == 1
 
-    page.pinboard.clear_pinboard_using_keyboard_shortcut()
+    page.pinboard.clear_pinboard(method='keyboard')
 
     assert len(page.pinboard.jobs) == 0
 
@@ -259,7 +255,7 @@ def test_toggle_pending_and_running_jobs(base_url, selenium):
     assert len(page.all_pending_jobs) > 1
     assert len(page.all_running_jobs) > 1
 
-    page.click_on_in_progress_button()
+    page.toggle_jobs_in_progress(option='hide')
 
     assert len(page.all_pending_jobs) == 0
     assert len(page.all_running_jobs) == 0
