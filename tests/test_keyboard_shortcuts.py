@@ -68,12 +68,9 @@ def test_next_job_shortcut(base_url, selenium):
     all_jobs = page.all_jobs
 
     # Check number of jobs
-    number_of_jobs = len(all_jobs) - 1
-    random_index = random.randint(0, number_of_jobs)
+    number_of_jobs = len(all_jobs)
+    random_index = random.randint(1, number_of_jobs - 1)
     next_job = random_index + 1
-
-    if random_index == number_of_jobs:
-        next_job = 0
 
     # Select random job and job next to it
     all_jobs[next_job].click()
@@ -96,12 +93,9 @@ def test_previous_job_shortcut(base_url, selenium):
     all_jobs = page.all_jobs
 
     # Check number of jobs
-    number_of_jobs = len(all_jobs) - 1
-    random_index = random.randint(0, number_of_jobs)
+    number_of_jobs = len(all_jobs)
+    random_index = random.randint(1, number_of_jobs - 1)
     previous_job = random_index - 1
-
-    if random_index == 0:
-        previous_job = number_of_jobs
 
     # Select random job and job to the left
     all_jobs[previous_job].click()
@@ -126,12 +120,9 @@ def test_previous_unclassified_failure_shortcut(base_url, selenium):
     all_unclassified_failures = page.all_jobs
 
     # Check number of unclassified failures
-    number_of_unclassified_failures = len(all_unclassified_failures) - 1
-    rnd_number = random.randint(0, number_of_unclassified_failures)
+    number_of_unclassified_failures = len(all_unclassified_failures)
+    rnd_number = random.randint(1, number_of_unclassified_failures - 1)
     previous_failure = rnd_number - 1
-
-    if rnd_number == 0:
-        previous_failure = number_of_unclassified_failures
 
     # Select random unclassified failure
     all_unclassified_failures[previous_failure].click()
